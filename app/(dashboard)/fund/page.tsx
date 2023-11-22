@@ -4,10 +4,11 @@
 // @ts-nocheck
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { useAccount, useNetwork } from "wagmi";
+import { erc20ABI } from "wagmi";
 import { toro } from "@/utils/constant";
 import toroABI from "../../../abi/toro.json";
 import { ethers } from "ethers";
@@ -15,8 +16,10 @@ import { toast } from "react-toastify";
 
 export default function Fund() {
   const { chain } = useNetwork();
-  const network = chain?.network;
-  const [state, setState] = useState("1");
+  const { address } = useAccount();
+  const [allowance, setAllowance] = useState(0);
+  const [currentAmount, setCurrentAmount] = useState(0);
+  const [balance, setBalance] = useState(0);
 
   const createWriteContract = async () => {
     const { ethereum } = window;
@@ -27,30 +30,79 @@ export default function Fund() {
     return toroContract;
   };
 
-  const actionTypeRef = useRef();
-  const doc1Ref = useRef();
-  const doc2Ref = useRef();
+  const createTokenContract = async () => {
+    const { ethereum } = window;
+    const provider = new ethers.BrowserProvider(ethereum);
+    const signer = await provider.getSigner();
+    const contract = new ethers.Contract(
+      "0xff0dFAe9c45EeB5cA5d269BE47eea69eab99bf6C",
+      erc20ABI,
+      signer
+    );
+    return contract;
+  };
 
-  const createAction = async (evt) => {
+  const amountRef = useRef();
+
+  const allowanceCheck = async () => {
+    const contract = await createTokenContract();
+    const amount = await contract.allowance(address, toro);
+    const balance = await contract.balanceOf(address);
+    setBalance(Number(balance) / 10 ** 18);
+    setAllowance(Number(amount) / 10 ** 18);
+  };
+
+  const getBalance = async () => {
+    const contract = await createTokenContract();
+    const balance = await contract.balanceOf(address);
+    console.log(balance);
+    setBalance(Number(balance) / 10 ** 18);
+  };
+
+  const approve = async (evt) => {
     evt.preventDefault();
-    const contract = await createWriteContract();
+    const contract = await createTokenContract();
+    const amount = ethers.parseEther(amountRef.current.value);
 
     const id = toast.loading("Transaction in progress..");
 
     try {
-      const tx = await contract.registerAction(
-        actionTypeRef.current.value,
-        doc1Ref.current.value,
-        doc2Ref.current.value
-      );
-
+      const tx = await contract.approve(toro, amount);
       await tx.wait();
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 10000);
-
       toast.update(id, {
-        render: "Transaction successfull, Environmental Action Created",
+        render: "Approval successfull, You can now add your funds",
+        type: "success",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+      allowanceCheck();
+      const allowance = await contract.allowance(address, toro);
+      setAllowance(Number(allowance) / 10 ** 18);
+    } catch (error) {
+      console.log(error);
+      toast.update(id, {
+        render: `${error.reason}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 1000,
+        closeButton: true,
+      });
+    }
+  };
+
+  const fund = async (evt) => {
+    evt.preventDefault();
+    const contract = await createWriteContract();
+    const amount = ethers.parseEther(amountRef.current.value);
+
+    const id = toast.loading("Transaction in progress..");
+
+    try {
+      const tx = await contract.donateOrFund(amount);
+      await tx.wait();
+      toast.update(id, {
+        render: "Funded Successfully",
         type: "success",
         isLoading: false,
         autoClose: 10000,
@@ -62,11 +114,16 @@ export default function Fund() {
         render: `${error.reason}`,
         type: "error",
         isLoading: false,
-        autoClose: 10000,
+        autoClose: 1000,
         closeButton: true,
       });
     }
   };
+
+  useEffect(() => {
+    getBalance();
+    allowanceCheck();
+  }, []);
 
   return (
     <section className="container flex flex-col  gap-6 py-8 md:max-w-[64rem] md:py-12 lg:py-24">
@@ -92,7 +149,8 @@ export default function Fund() {
       <div className="mt-10 flex justify-between">
         <div className="w-full">
           <div className="mb-6">
-            Toro Balance - <span className="text-lg pt-6  font-bold">50</span>
+            Toro Balance -{" "}
+            <span className="text-lg pt-6  font-bold">{balance}</span>
           </div>
           <div>
             <input
@@ -101,15 +159,28 @@ export default function Fund() {
                 "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               )}
               placeholder="Enter the amount (toro)"
+              ref={amountRef}
+              onChange={() => setCurrentAmount(amountRef.current.value)}
             />
           </div>
 
-          <button
-            className={` ${cn(buttonVariants())} mt-3 w-1/2 mx-auto`}
-            style={{ display: "block" }}
-          >
-            Fund
-          </button>
+          {allowance >= currentAmount ? (
+            <button
+              className={` ${cn(buttonVariants())} mt-3 w-1/2 mx-auto`}
+              style={{ display: "block" }}
+              onClick={fund}
+            >
+              Fund
+            </button>
+          ) : (
+            <button
+              className={` ${cn(buttonVariants())} mt-3 w-1/2 mx-auto`}
+              style={{ display: "block" }}
+              onClick={approve}
+            >
+              Approve
+            </button>
+          )}
         </div>
       </div>
     </section>

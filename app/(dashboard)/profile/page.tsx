@@ -4,8 +4,9 @@
 // @ts-nocheck
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { erc20ABI } from "wagmi";
 import { buttonVariants } from "@/components/ui/button";
 import { useAccount, useNetwork } from "wagmi";
 import { toro } from "@/utils/constant";
@@ -15,8 +16,11 @@ import { toast } from "react-toastify";
 
 export default function Profile() {
   const { chain } = useNetwork();
-  const network = chain?.network;
   const [state, setState] = useState("1");
+  const { address } = useAccount();
+  const [balance, setBalance] = useState(0);
+  const [point, setPoint] = useState(0);
+  const [over, setOver] = useState(0);
 
   const createWriteContract = async () => {
     const { ethereum } = window;
@@ -25,6 +29,39 @@ export default function Profile() {
 
     const toroContract = new ethers.Contract(toro, toroABI.abi, signer);
     return toroContract;
+  };
+
+  const createReadContract = async () => {
+    const { ethereum } = window;
+    const provider = new ethers.BrowserProvider(ethereum);
+    const contract = new ethers.Contract(toro, toroABI.abi, provider);
+    return contract;
+  };
+
+  const createTokenContract = async () => {
+    const { ethereum } = window;
+    const provider = new ethers.BrowserProvider(ethereum);
+
+    const contract = new ethers.Contract(
+      "0xff0dFAe9c45EeB5cA5d269BE47eea69eab99bf6C",
+      erc20ABI,
+      provider
+    );
+    return contract;
+  };
+
+  const getBalance = async () => {
+    const contract = await createTokenContract();
+    const balance = await contract.balanceOf(address);
+    setBalance(Number(balance) / 10 ** 18);
+  };
+
+  const getUserData = async () => {
+    const contract = await createReadContract();
+    const data = await contract.getUserData(address);
+    console.log(data.score);
+    setPoint(data.score);
+    setOver(data.overall_score);
   };
 
   const actionTypeRef = useRef();
@@ -68,6 +105,11 @@ export default function Profile() {
     }
   };
 
+  useEffect(() => {
+    getBalance();
+    getUserData();
+  }, []);
+
   return (
     <section className="container flex flex-col  gap-6 py-8 md:max-w-[64rem] md:py-12 lg:py-24">
       <div className="bg-gradient-to-r from-cyan-500 to-blue-500 flex justify-between px-12 py-12 rounded-md">
@@ -106,13 +148,16 @@ export default function Profile() {
 
         <div className="w-4/12">
           <div>
-            Overall Point - <span className="text-lg pt-6 font-bold">200</span>
+            Overall Point -{" "}
+            <span className="text-lg pt-6 font-bold">{Number(over)}</span>
           </div>
           <div>
-            Payable Point - <span className="text-lg pt-6 font-bold">100</span>
+            Current Point -{" "}
+            <span className="text-lg pt-6 font-bold">{Number(point)}</span>
           </div>
           <div>
-            Toro Balance - <span className="text-lg pt-6 font-bold">50</span>
+            Toro Balance -{" "}
+            <span className="text-lg pt-6 font-bold">{Number(balance)}</span>
           </div>
         </div>
       </div>

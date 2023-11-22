@@ -131,6 +131,31 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="bg-gradient-to-r from-cyan-500 to-blue-500 flex justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
+        <div>
+          <div className="text-center text-2xl">Environmental Actions</div>
+          <div className="text-center text-lg pt-6 font-bold">10</div>
+        </div>
+        <div>
+          <div className="text-center text-2xl">Waste Recyled</div>
+          <div className="text-center text-lg pt-6 font-bold">100 kg</div>
+        </div>
+        <div>
+          <div className="text-center text-2xl">Trees Planted</div>
+          <div className="text-center text-lg pt-6 font-bold">20 trees</div>
+        </div>
+
+        <div>
+          <div className="text-center text-2xl">Paid Out</div>
+          <div className="text-center text-lg pt-6 font-bold">100 TORO</div>
+        </div>
+
+        <div>
+          <div className="text-center text-2xl">Users</div>
+          <div className="text-center text-lg pt-6 font-bold">50</div>
+        </div>
+      </section>
+
       <section id="open-source" className="container py-8 md:py-12 lg:py-24">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
@@ -144,22 +169,42 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-cyan-500 to-blue-500 flex justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
-        <div>
-          <div className="text-center text-2xl">Environmental Actions</div>
-          <div className="text-center text-lg pt-6 font-bold">10</div>
+      <section className="bg-gradient-to-r from-cyan-500 to-blue-500  justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
+        <div className="text-center text-3xl">How to Use ECO4Reward</div>
+        <div className="text-lg pt-6">Go to Actions page</div>
+        <div className="text-lg pt-3">
+          Select one of three options - Environment Action, Waste or Tree
+          planting
         </div>
-        <div>
-          <div className="text-center text-2xl">
-            Environmental Actions (Waste)
-          </div>
-          <div className="text-center text-lg pt-6 font-bold">100 kg</div>
+        <div className="text-lg pt-3">
+          Environmental Action involves actions that positively affect the
+          environment.
         </div>
-        <div>
-          <div className="text-center text-2xl">
-            Environmental Actions (Trees Planted)
-          </div>
-          <div className="text-center text-lg pt-6 font-bold">20 trees</div>
+        <div className="text-lg pt-3">
+          Waste Actions involves Waste recycling actions.
+        </div>
+        <div className="text-lg pt-3">
+          Tree planting involves planting of trees.
+        </div>
+        <div className="text-lg pt-3">
+          All actions need confirmation by admin after verification of the
+          information submitted.
+        </div>
+        <div className="text-lg pt-3">
+          For Environmental actions, if information submitted are not concrete
+          enough, physical confirmation may be needed before point are awarded
+        </div>
+        <div className="text-lg pt-3">
+          For waste actions, waste are submitted at accredited centres before
+          point are awarded. Waste Submission centers -
+          <a target="_blank" href="https://lawma.gov.ng/recycling/">
+            {" "}
+            https://lawma.gov.ng/recycling/
+          </a>
+        </div>
+        <div className="text-lg pt-3">
+          For Tree planting, physical confirmation are done before point are
+          awarded
         </div>
       </section>
 

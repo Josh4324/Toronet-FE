@@ -116,7 +116,7 @@ export default function OrderPage() {
                     "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   )}
                 >
-                  <option>Recycling</option>
+                  <option>Select Action Type</option>
                   <option>Reducing Water Usage</option>
                   <option>Energy Conservation</option>
                   <option>Sustainable Transportation</option>
@@ -173,7 +173,7 @@ export default function OrderPage() {
             must be submitted at our approved centers to be awarded your points.
           </div>
 
-          <form onSubmit={createOrder} className="mt-5">
+          <form onSubmit={createAction} className="mt-5">
             <div className="grid gap-2">
               <div className="grid gap-1 mb-3">
                 <label>Enter the weight of the waste</label>
@@ -218,7 +218,7 @@ export default function OrderPage() {
             of trees. The number of tress will determine the point awarded
           </div>
 
-          <form onSubmit={createOrder} className="mt-5">
+          <form onSubmit={createAction} className="mt-5">
             <div className="grid gap-2">
               <div className="grid gap-1 mb-3">
                 <label>Enter the number of trees planted</label>
@@ -240,7 +240,6 @@ export default function OrderPage() {
                   className={cn(
                     "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   )}
-                  ref={totalRef}
                   placeholder="Enter the link to document containing locations of trees planted"
                   required
                 />

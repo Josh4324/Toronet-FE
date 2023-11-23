@@ -31,6 +31,12 @@ export default function OrderPage() {
   const doc1Ref = useRef();
   const doc2Ref = useRef();
 
+  const weightRef = useRef();
+  const sortRef = useRef();
+
+  const treeRef = useRef();
+  const locationRef = useRef();
+
   const createAction = async (evt) => {
     evt.preventDefault();
     const contract = await createWriteContract();
@@ -51,6 +57,78 @@ export default function OrderPage() {
 
       toast.update(id, {
         render: "Transaction successfull, Environmental Action Created",
+        type: "success",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+    } catch (error) {
+      console.log(error);
+      toast.update(id, {
+        render: `${error.reason}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+    }
+  };
+
+  const createWaste = async (evt) => {
+    evt.preventDefault();
+    const contract = await createWriteContract();
+
+    const id = toast.loading("Transaction in progress..");
+
+    try {
+      const tx = await contract.registerWaste(
+        weightRef.current.value,
+        sortRef.current.value
+      );
+
+      await tx.wait();
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 10000);
+
+      toast.update(id, {
+        render: "Transaction successfull, Waste Action Created",
+        type: "success",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+    } catch (error) {
+      console.log(error);
+      toast.update(id, {
+        render: `${error.reason}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+    }
+  };
+
+  const createTree = async (evt) => {
+    evt.preventDefault();
+    const contract = await createWriteContract();
+
+    const id = toast.loading("Transaction in progress..");
+
+    try {
+      const tx = await contract.registerTrees(
+        treeRef.current.value,
+        locationRef.current.value
+      );
+
+      await tx.wait();
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 10000);
+
+      toast.update(id, {
+        render: "Transaction successfull, Waste Action Created",
         type: "success",
         isLoading: false,
         autoClose: 10000,
@@ -173,7 +251,7 @@ export default function OrderPage() {
             must be submitted at our approved centers to be awarded your points.
           </div>
 
-          <form onSubmit={createAction} className="mt-5">
+          <form onSubmit={createWaste} className="mt-5">
             <div className="grid gap-2">
               <div className="grid gap-1 mb-3">
                 <label>Enter the weight of the waste</label>
@@ -184,12 +262,13 @@ export default function OrderPage() {
                   )}
                   placeholder="Enter the weight of the waste"
                   required
+                  ref={weightRef}
                 />
               </div>
               <div className="grid gap-1 mb-3">
                 <label>Is waste sorted</label>
                 <select
-                  ref={actionTypeRef}
+                  ref={sortRef}
                   className={cn(
                     "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   )}
@@ -200,7 +279,7 @@ export default function OrderPage() {
               </div>
 
               <button className={` ${cn(buttonVariants())} mt-3 `}>
-                Create Action
+                Create Waste Action
               </button>
             </div>
           </form>
@@ -218,7 +297,7 @@ export default function OrderPage() {
             of trees. The number of tress will determine the point awarded
           </div>
 
-          <form onSubmit={createAction} className="mt-5">
+          <form onSubmit={createTree} className="mt-5">
             <div className="grid gap-2">
               <div className="grid gap-1 mb-3">
                 <label>Enter the number of trees planted</label>
@@ -229,6 +308,7 @@ export default function OrderPage() {
                   )}
                   placeholder="Enter the number of trees planted"
                   required
+                  ref={treeRef}
                 />
               </div>
               <div className="grid gap-1 mb-3">
@@ -242,11 +322,12 @@ export default function OrderPage() {
                   )}
                   placeholder="Enter the link to document containing locations of trees planted"
                   required
+                  ref={locationRef}
                 />
               </div>
 
               <button className={` ${cn(buttonVariants())} mt-3 `}>
-                Create Action
+                Create Tree Planting Action
               </button>
             </div>
           </form>

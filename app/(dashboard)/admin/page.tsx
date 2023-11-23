@@ -24,6 +24,8 @@ export default function Admin() {
   const [mstate2, setMstate2] = useState(false);
   const [id, setId] = useState(0);
   const [data, setData] = useState([]);
+  const [data1, setData1] = useState([]);
+  const [data2, setData2] = useState([]);
 
   const createWriteContract = async () => {
     const { ethereum } = window;
@@ -44,8 +46,19 @@ export default function Admin() {
   const getActions = async () => {
     const contract = await createReadContract();
     const actions = await contract.getActions();
-    console.log(actions);
     setData(actions);
+  };
+
+  const getWaste = async () => {
+    const contract = await createReadContract();
+    const waste = await contract.getWasteActions();
+    setData1(waste);
+  };
+
+  const getTrees = async () => {
+    const contract = await createReadContract();
+    const waste = await contract.getTreeActions();
+    setData2(waste);
   };
 
   const getAdmin = async () => {
@@ -157,24 +170,141 @@ export default function Admin() {
   };
 
   const approveWaste = async (id, score) => {
+    const contract = await createWriteContract();
+
     console.log(id);
+    console.log(score);
+
+    const id1 = toast.loading("Transaction in progress..");
+
+    try {
+      const tx = await contract.confirmWaste(id, score, true);
+
+      await tx.wait();
+      setTimeout(() => {
+        window.location.reload();
+      }, 10000);
+
+      toast.update(id1, {
+        render: "Transaction successfull, Confirmed successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+    } catch (error) {
+      console.log(error);
+      toast.update(id1, {
+        render: `${error.reason}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+    }
   };
 
   const rejectWaste = async (id) => {
-    console.log(id);
+    const contract = await createWriteContract();
+
+    const id1 = toast.loading("Transaction in progress..");
+
+    try {
+      const tx = await contract.confirmWaste(id, 0, false);
+
+      await tx.wait();
+      setTimeout(() => {
+        window.location.reload();
+      }, 10000);
+
+      toast.update(id1, {
+        render: "Transaction successfull, Confirmed successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+    } catch (error) {
+      console.log(error);
+      toast.update(id1, {
+        render: `${error.reason}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+    }
   };
 
   const approveTree = async (id, score) => {
-    console.log(id);
+    const contract = await createWriteContract();
+
+    const id1 = toast.loading("Transaction in progress..");
+
+    try {
+      const tx = await contract.confirmTress(id, score, true);
+
+      await tx.wait();
+      setTimeout(() => {
+        window.location.reload();
+      }, 10000);
+
+      toast.update(id1, {
+        render: "Transaction successfull, Confirmed successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+    } catch (error) {
+      console.log(error);
+      toast.update(id1, {
+        render: `${error.reason}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+    }
   };
 
   const rejectTree = async (id) => {
-    console.log(id);
+    const contract = await createWriteContract();
+
+    const id1 = toast.loading("Transaction in progress..");
+
+    try {
+      const tx = await contract.confirmTrees(id, 0, false);
+
+      await tx.wait();
+      setTimeout(() => {
+        window.location.reload();
+      }, 10000);
+
+      toast.update(id1, {
+        render: "Transaction successfull, Confirmed successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+    } catch (error) {
+      console.log(error);
+      toast.update(id1, {
+        render: `${error.reason}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+    }
   };
 
   useEffect(() => {
     getActions();
     getAdmin();
+    getWaste();
+    getTrees();
   }, []);
 
   return (
@@ -234,6 +364,8 @@ export default function Admin() {
                 <th>Description Doc Link</th>
                 <th>Proof Doc Link</th>
                 <th>Creator</th>
+                <th>Approval Status</th>
+                <th>Status</th>
                 <th></th>
               </tr>
               {data.map((item) => {
@@ -245,12 +377,20 @@ export default function Admin() {
                     <td>{item.proof}</td>
                     <td>{item.creator}</td>
                     <td>
+                      {item.status && item.confirmed
+                        ? "Approved"
+                        : item.status === false && item.confirmed === false
+                        ? "Pending"
+                        : "Rejected"}
+                    </td>
+                    <td>{item.confirmed ? "Evaluated" : "Pending"}</td>
+                    <td>
                       <button
                         onClick={() => {
                           setMstate(true);
                           setId(String(item?.id));
                         }}
-                        className={` ${cn(buttonVariants())} `}
+                        className={` ${cn(buttonVariants())} ml-4 `}
                       >
                         Confirm
                       </button>
@@ -272,36 +412,39 @@ export default function Admin() {
                 <th>Weight</th>
                 <th>Sorted</th>
                 <th>Creator</th>
+                <th>Approval Status</th>
+                <th>Status</th>
                 <th></th>
               </tr>
-              <tr className="text-center">
-                <td className="py-6">1</td>
-                <td>100</td>
-                <td>100</td>
-                <td>0x1443498Ef86df975D8A2b0B6a315fB9f49978998</td>
-                <td>
-                  <button
-                    onClick={() => setMstate1(true)}
-                    className={` ${cn(buttonVariants())} `}
-                  >
-                    Confirm
-                  </button>
-                </td>
-              </tr>
-              <tr className="text-center">
-                <td className="py-6">1</td>
-                <td>100</td>
-                <td>100</td>
-                <td>0x1443498Ef86df975D8A2b0B6a315fB9f49978998</td>
-                <td>
-                  <button
-                    onClick={() => setMstate(true)}
-                    className={` ${cn(buttonVariants())} `}
-                  >
-                    Confirm
-                  </button>
-                </td>
-              </tr>
+              {data1.map((item) => {
+                return (
+                  <tr className="text-center">
+                    <td className="py-6">{String(item?.id)}</td>
+                    <td>{Number(item.weight)}</td>
+                    <td>{item.sorted ? "True" : "False"}</td>
+                    <td>{item.creator}</td>
+                    <td>
+                      {item.status && item.confirmed
+                        ? "Approved"
+                        : item.status === false && item.confirmed === false
+                        ? "Pending"
+                        : "Rejected"}
+                    </td>
+                    <td>{item.confirmed ? "Evaluated" : "Pending"}</td>
+                    <td>
+                      <button
+                        onClick={() => {
+                          setMstate1(true);
+                          setId(String(item?.id));
+                        }}
+                        className={` ${cn(buttonVariants())} ml-4 `}
+                      >
+                        Confirm
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </section>
@@ -316,36 +459,39 @@ export default function Admin() {
                 <th>Number of Trees</th>
                 <th>Locations Doc Link</th>
                 <th>Creator</th>
+                <th>Approval Status</th>
+                <th>Status</th>
                 <th></th>
               </tr>
-              <tr className="text-center">
-                <td className="py-6">1</td>
-                <td>100</td>
-                <td>100</td>
-                <td>0x1443498Ef86df975D8A2b0B6a315fB9f49978998</td>
-                <td>
-                  <button
-                    onClick={() => setMstate2(true)}
-                    className={` ${cn(buttonVariants())} `}
-                  >
-                    Confirm
-                  </button>
-                </td>
-              </tr>
-              <tr className="text-center">
-                <td className="py-6">1</td>
-                <td>100</td>
-                <td>100</td>
-                <td>0x1443498Ef86df975D8A2b0B6a315fB9f49978998</td>
-                <td>
-                  <button
-                    onClick={() => setMstate(true)}
-                    className={` ${cn(buttonVariants())} `}
-                  >
-                    Confirm
-                  </button>
-                </td>
-              </tr>
+              {data2.map((item) => {
+                return (
+                  <tr className="text-center">
+                    <td className="py-6">{String(item?.id)}</td>
+                    <td>{Number(item.no_of_trees)}</td>
+                    <td>{item.locations}</td>
+                    <td>{item.creator}</td>
+                    <td>
+                      {item.status && item.confirmed
+                        ? "Approved"
+                        : item.status === false && item.confirmed === false
+                        ? "Pending"
+                        : "Rejected"}
+                    </td>
+                    <td>{item.confirmed ? "Evaluated" : "Pending"}</td>
+                    <td>
+                      <button
+                        onClick={() => {
+                          setMstate2(true);
+                          setId(String(item?.id));
+                        }}
+                        className={` ${cn(buttonVariants())} ml-4 `}
+                      >
+                        Confirm
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </section>
@@ -376,7 +522,7 @@ export default function Admin() {
               Approve
             </button>
             <button
-              onClick={() => rejectAction(1)}
+              onClick={() => rejectAction(id)}
               className={` ${cn(buttonVariants())} mt-3 `}
             >
               Reject
@@ -404,13 +550,13 @@ export default function Admin() {
 
           <div className="flex w-full justify-between">
             <button
-              onClick={() => approveWaste(1, scoreRef.current.value)}
+              onClick={() => approveWaste(id, scoreRef.current.value)}
               className={` ${cn(buttonVariants())} mt-3 `}
             >
               Approve
             </button>
             <button
-              onClick={() => rejectWaste(1)}
+              onClick={() => rejectWaste(id)}
               className={` ${cn(buttonVariants())} mt-3 `}
             >
               Reject
@@ -438,13 +584,13 @@ export default function Admin() {
 
           <div className="flex w-full justify-between">
             <button
-              onClick={() => approveTree(1, scoreRef.current.value)}
+              onClick={() => approveTree(id, scoreRef.current.value)}
               className={` ${cn(buttonVariants())} mt-3 `}
             >
               Approve
             </button>
             <button
-              onClick={() => rejectTree(1)}
+              onClick={() => rejectTree(id)}
               className={` ${cn(buttonVariants())} mt-3 `}
             >
               Reject

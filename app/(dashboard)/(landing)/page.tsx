@@ -1,11 +1,51 @@
+/* eslint-disable @next/next/no-async-client-component */
+/* eslint-disable */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { useState, useRef, useEffect } from "react";
+import { erc20ABI } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
+import { toro } from "@/utils/constant";
+import toroABI from "../../../abi/toro.json";
+import { ethers } from "ethers";
+import { toast } from "react-toastify";
 
 export default function Home() {
+  const [action, setActions] = useState(0);
+  const [waste, setWaste] = useState(0);
+  const [trees, setTrees] = useState(0);
+  const [users, setUsers] = useState(0);
+  const [paid, setPaid] = useState(0);
+
+  const createReadContract = async () => {
+    const { ethereum } = window;
+    const provider = new ethers.BrowserProvider(ethereum);
+    const contract = new ethers.Contract(toro, toroABI.abi, provider);
+    return contract;
+  };
+
+  const getContractData = async () => {
+    const contract = await createReadContract();
+    const data = await contract.getContractData();
+    console.log(data);
+    setActions(data[0]);
+    setWaste(data[1]);
+    setTrees(data[2]);
+    setUsers(data[3]);
+    setPaid(data[4]);
+  };
+
+  useEffect(() => {
+    getContractData();
+  }, []);
   return (
     <>
       <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
@@ -134,25 +174,35 @@ export default function Home() {
       <section className="bg-gradient-to-r from-cyan-500 to-blue-500 flex justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
         <div>
           <div className="text-center text-2xl">Environmental Actions</div>
-          <div className="text-center text-lg pt-6 font-bold">10</div>
+          <div className="text-center text-lg pt-6 font-bold">
+            {Number(action)}
+          </div>
         </div>
         <div>
           <div className="text-center text-2xl">Waste Recyled</div>
-          <div className="text-center text-lg pt-6 font-bold">100 kg</div>
+          <div className="text-center text-lg pt-6 font-bold">
+            {Number(waste)} kg
+          </div>
         </div>
         <div>
           <div className="text-center text-2xl">Trees Planted</div>
-          <div className="text-center text-lg pt-6 font-bold">20 trees</div>
+          <div className="text-center text-lg pt-6 font-bold">
+            {Number(trees)} trees
+          </div>
         </div>
 
         <div>
           <div className="text-center text-2xl">Paid Out</div>
-          <div className="text-center text-lg pt-6 font-bold">100 TORO</div>
+          <div className="text-center text-lg pt-6 font-bold">
+            {Number(paid)} TORO
+          </div>
         </div>
 
         <div>
           <div className="text-center text-2xl">Users</div>
-          <div className="text-center text-lg pt-6 font-bold">50</div>
+          <div className="text-center text-lg pt-6 font-bold">
+            {Number(users)}
+          </div>
         </div>
       </section>
 

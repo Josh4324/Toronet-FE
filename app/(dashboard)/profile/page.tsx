@@ -21,6 +21,12 @@ export default function Profile() {
   const [balance, setBalance] = useState(0);
   const [point, setPoint] = useState(0);
   const [over, setOver] = useState(0);
+  const [data, setData] = useState([]);
+  const [data1, setData1] = useState([]);
+  const [data2, setData2] = useState([]);
+  const [action, setAction] = useState(0);
+  const [waste, setWaste] = useState(0);
+  const [tree, setTree] = useState(0);
 
   const createWriteContract = async () => {
     const { ethereum } = window;
@@ -62,52 +68,42 @@ export default function Profile() {
     console.log(data.score);
     setPoint(data.score);
     setOver(data.overall_score);
+    setAction(data.actions);
+    setTree(data.trees);
+    setWaste(data.waste);
+  };
+
+  const getActions = async () => {
+    const contract = await createReadContract();
+    const actions = await contract.getActions();
+    const filt = actions.filter((item) => item.creator === address);
+    setData(filt);
+  };
+
+  const getWaste = async () => {
+    const contract = await createReadContract();
+    const waste = await contract.getWasteActions();
+    const filt = waste.filter((item) => item.creator === address);
+    setData1(filt);
+  };
+
+  const getTrees = async () => {
+    const contract = await createReadContract();
+    const tree = await contract.getTreeActions();
+    const filt = tree.filter((item) => item.creator === address);
+    setData2(filt);
   };
 
   const actionTypeRef = useRef();
   const doc1Ref = useRef();
   const doc2Ref = useRef();
 
-  const createAction = async (evt) => {
-    evt.preventDefault();
-    const contract = await createWriteContract();
-
-    const id = toast.loading("Transaction in progress..");
-
-    try {
-      const tx = await contract.registerAction(
-        actionTypeRef.current.value,
-        doc1Ref.current.value,
-        doc2Ref.current.value
-      );
-
-      await tx.wait();
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 10000);
-
-      toast.update(id, {
-        render: "Transaction successfull, Environmental Action Created",
-        type: "success",
-        isLoading: false,
-        autoClose: 10000,
-        closeButton: true,
-      });
-    } catch (error) {
-      console.log(error);
-      toast.update(id, {
-        render: `${error.reason}`,
-        type: "error",
-        isLoading: false,
-        autoClose: 10000,
-        closeButton: true,
-      });
-    }
-  };
-
   useEffect(() => {
     getBalance();
     getUserData();
+    getActions();
+    getWaste();
+    getTrees();
   }, []);
 
   return (
@@ -115,19 +111,25 @@ export default function Profile() {
       <div className="bg-gradient-to-r from-cyan-500 to-blue-500 flex justify-between px-12 py-12 rounded-md">
         <div>
           <div className="text-center text-2xl">Environmental Actions</div>
-          <div className="text-center text-lg pt-6 font-bold">10</div>
+          <div className="text-center text-lg pt-6 font-bold">
+            {Number(action)}
+          </div>
         </div>
         <div>
           <div className="text-center text-2xl">
             Environmental Actions (Waste)
           </div>
-          <div className="text-center text-lg pt-6 font-bold">100 kg</div>
+          <div className="text-center text-lg pt-6 font-bold">
+            {Number(waste)} kg
+          </div>
         </div>
         <div>
           <div className="text-center text-2xl">
             Environmental Actions (Trees Planted)
           </div>
-          <div className="text-center text-lg pt-6 font-bold">20 trees</div>
+          <div className="text-center text-lg pt-6 font-bold">
+            {Number(tree)} trees
+          </div>
         </div>
       </div>
 
@@ -184,6 +186,115 @@ export default function Profile() {
           Enviromental Action (Tree Planting)
         </button>
       </div>
+
+      {state === "1" ? (
+        <section style={{ marginTop: "30px", overflowX: "auto" }} className="">
+          <div className="mb-3 text-lg font-bold">Actions</div>
+          <table className="font-heading mx-auto w-98 text-white px-3 table-auto w-full">
+            <tbody>
+              <tr className="font-heading">
+                <th>Id</th>
+                <th>Action Type</th>
+                <th>Description Doc Link</th>
+                <th>Proof Doc Link</th>
+                <th>Creator</th>
+                <th>Approval Status</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+              {data.map((item) => {
+                return (
+                  <tr className="text-center">
+                    <td className="py-6">{String(item?.id)}</td>
+                    <td>{item.action_type}</td>
+                    <td>{item.description}</td>
+                    <td>{item.proof}</td>
+                    <td>{item.creator}</td>
+                    <td>
+                      {item.status && item.confirmed
+                        ? "Approved"
+                        : item.status === false && item.confirmed === false
+                        ? "Pending"
+                        : "Rejected"}
+                    </td>
+                    <td>{item.confirmed ? "Evaluated" : "Pending"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </section>
+      ) : null}
+      {state === "2" ? (
+        <section style={{ marginTop: "30px", overflowX: "auto" }} className="">
+          <div className="mb-3 text-lg font-bold">Waste</div>
+          <table className="font-heading mx-auto w-98 text-white px-3 table-auto w-full">
+            <tbody>
+              <tr className="font-heading">
+                <th>Id</th>
+                <th>Weight</th>
+                <th>Sorted</th>
+                <th>Creator</th>
+                <th>Approval Status</th>
+                <th>Status</th>
+              </tr>
+              {data1.map((item) => {
+                return (
+                  <tr className="text-center">
+                    <td className="py-6">{String(item?.id)}</td>
+                    <td>{Number(item.weight)}</td>
+                    <td>{item.sorted ? "True" : "False"}</td>
+                    <td>{item.creator}</td>
+                    <td>
+                      {item.status && item.confirmed
+                        ? "Approved"
+                        : item.status === false && item.confirmed === false
+                        ? "Pending"
+                        : "Rejected"}
+                    </td>
+                    <td>{item.confirmed ? "Evaluated" : "Pending"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </section>
+      ) : null}
+      {state === "3" ? (
+        <section style={{ marginTop: "30px", overflowX: "auto" }} className="">
+          <div className="mb-3 text-lg font-bold">Tree Planting</div>
+          <table className="font-heading mx-auto w-98 text-white px-3 table-auto w-full">
+            <tbody>
+              <tr className="font-heading">
+                <th>Id</th>
+                <th>Number of Trees</th>
+                <th>Locations Doc Link</th>
+                <th>Creator</th>
+                <th>Approval Status</th>
+                <th>Status</th>
+              </tr>
+              {data2.map((item) => {
+                return (
+                  <tr className="text-center">
+                    <td className="py-6">{String(item?.id)}</td>
+                    <td>{Number(item.no_of_trees)}</td>
+                    <td>{item.locations}</td>
+                    <td>{item.creator}</td>
+                    <td>
+                      {item.status && item.confirmed
+                        ? "Approved"
+                        : item.status === false && item.confirmed === false
+                        ? "Pending"
+                        : "Rejected"}
+                    </td>
+                    <td>{item.confirmed ? "Evaluated" : "Pending"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </section>
+      ) : null}
     </section>
   );
 }

@@ -27,6 +27,7 @@ export default function Profile() {
   const [action, setAction] = useState(0);
   const [waste, setWaste] = useState(0);
   const [tree, setTree] = useState(0);
+  const pointRef = useRef();
 
   const createWriteContract = async () => {
     const { ethereum } = window;
@@ -94,9 +95,37 @@ export default function Profile() {
     setData2(filt);
   };
 
-  const actionTypeRef = useRef();
-  const doc1Ref = useRef();
-  const doc2Ref = useRef();
+  const withdraw = async (evt) => {
+    evt.preventDefault();
+    const contract = await createWriteContract();
+
+    const id = toast.loading("Transaction in progress..");
+
+    try {
+      const tx = await contract.getPaid(pointRef.current.value);
+      await tx.wait();
+      toast.update(id, {
+        render: "Withdrawal Successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 10000,
+        closeButton: true,
+      });
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 10000);
+    } catch (error) {
+      console.log(error);
+      toast.update(id, {
+        render: `${error.reason}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 1000,
+        closeButton: true,
+      });
+    }
+  };
 
   useEffect(() => {
     getBalance();
@@ -142,10 +171,16 @@ export default function Profile() {
                 "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               )}
               placeholder="Enter the number of points to convert to toro coin"
+              ref={pointRef}
             />
           </div>
 
-          <button className={` ${cn(buttonVariants())} mt-3 `}>Withdraw</button>
+          <button
+            onClick={withdraw}
+            className={` ${cn(buttonVariants())} mt-3 `}
+          >
+            Withdraw
+          </button>
         </div>
 
         <div className="w-4/12">

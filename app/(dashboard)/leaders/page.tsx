@@ -4,7 +4,7 @@
 // @ts-nocheck
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { useAccount, useNetwork } from "wagmi";
@@ -17,6 +17,8 @@ export default function Leader() {
   const { chain } = useNetwork();
   const network = chain?.network;
   const [state, setState] = useState("1");
+  const [data, setData] = useState([]);
+  const [data1, setData1] = useState([]);
 
   const createWriteContract = async () => {
     const { ethereum } = window;
@@ -27,46 +29,30 @@ export default function Leader() {
     return toroContract;
   };
 
-  const actionTypeRef = useRef();
-  const doc1Ref = useRef();
-  const doc2Ref = useRef();
-
-  const createAction = async (evt) => {
-    evt.preventDefault();
-    const contract = await createWriteContract();
-
-    const id = toast.loading("Transaction in progress..");
-
-    try {
-      const tx = await contract.registerAction(
-        actionTypeRef.current.value,
-        doc1Ref.current.value,
-        doc2Ref.current.value
-      );
-
-      await tx.wait();
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 10000);
-
-      toast.update(id, {
-        render: "Transaction successfull, Environmental Action Created",
-        type: "success",
-        isLoading: false,
-        autoClose: 10000,
-        closeButton: true,
-      });
-    } catch (error) {
-      console.log(error);
-      toast.update(id, {
-        render: `${error.reason}`,
-        type: "error",
-        isLoading: false,
-        autoClose: 10000,
-        closeButton: true,
-      });
-    }
+  const createReadContract = async () => {
+    const { ethereum } = window;
+    const provider = new ethers.BrowserProvider(ethereum);
+    const contract = new ethers.Contract(toro, toroABI.abi, provider);
+    return contract;
   };
+
+  const getuserData = async () => {
+    const contract = await createReadContract();
+    const data = await contract.getUserList();
+    const sortCurrent = Array.from(data).sort(
+      (a, b) => Number(b.score) - Number(a.score)
+    );
+
+    const sortAll = Array.from(data).sort(
+      (a, b) => Number(b.overall_score) - Number(a.overall_score)
+    );
+    setData(sortCurrent);
+    setData1(sortAll);
+  };
+
+  useEffect(() => {
+    getuserData();
+  }, []);
 
   return (
     <section className="container flex flex-col  gap-6 py-8 md:max-w-[64rem] md:py-12 lg:py-24">
@@ -80,16 +66,15 @@ export default function Leader() {
               <th>User</th>
               <th>Score</th>
             </tr>
-            <tr className="text-center">
-              <td>1</td>
-              <td>0x1443498Ef86df975D8A2b0B6a315fB9f49978998</td>
-              <td>100</td>
-            </tr>
-            <tr className="text-center">
-              <td>2</td>
-              <td>0x1443498Ef86df975D8A2b0B6a315fB9f49978998</td>
-              <td>100</td>
-            </tr>
+            {data.map((item) => {
+              return (
+                <tr className="text-center">
+                  <td className="py-6">{String(item?.id)}</td>
+                  <td>{item.user}</td>
+                  <td>{Number(item.score)}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </section>
@@ -104,16 +89,15 @@ export default function Leader() {
               <th>User</th>
               <th>Score</th>
             </tr>
-            <tr className="text-center">
-              <td>1</td>
-              <td>0x1443498Ef86df975D8A2b0B6a315fB9f49978998</td>
-              <td>100</td>
-            </tr>
-            <tr className="text-center">
-              <td>2</td>
-              <td>0x1443498Ef86df975D8A2b0B6a315fB9f49978998</td>
-              <td>100</td>
-            </tr>
+            {data1.map((item) => {
+              return (
+                <tr className="text-center">
+                  <td className="py-6">{String(item?.id)}</td>
+                  <td>{item.user}</td>
+                  <td>{Number(item.overall_score)}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </section>

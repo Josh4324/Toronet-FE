@@ -68,15 +68,13 @@ export default function Admin() {
     //setData(actions);
   };
 
-  const actionTypeRef = useRef();
-  const doc1Ref = useRef();
-  const doc2Ref = useRef();
-
   const addAdmin = async (evt) => {
     evt.preventDefault();
     const contract = await createWriteContract();
 
     const id = toast.loading("Transaction in progress..");
+
+    console.log(addRef.current.value);
 
     try {
       const tx = await contract.addAdmin(addRef.current.value);

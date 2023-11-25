@@ -20,6 +20,7 @@ export default function Fund() {
   const [allowance, setAllowance] = useState(0);
   const [currentAmount, setCurrentAmount] = useState(0);
   const [balance, setBalance] = useState(0);
+  const [balance1, setBalance1] = useState(0);
 
   const createWriteContract = async () => {
     const { ethereum } = window;
@@ -55,8 +56,9 @@ export default function Fund() {
   const getBalance = async () => {
     const contract = await createTokenContract();
     const balance = await contract.balanceOf(address);
-    console.log(balance);
+    const balance1 = await contract.balanceOf(toro);
     setBalance(Number(balance) / 10 ** 18);
+    setBalance1(Number(balance1) / 10 ** 18);
   };
 
   const approve = async (evt) => {
@@ -149,7 +151,11 @@ export default function Fund() {
       <div className="mt-10 flex justify-between">
         <div className="w-full">
           <div className="mb-6">
-            Toro Balance -{" "}
+            Contract Balance -{" "}
+            <span className="text-lg pt-6  font-bold">{balance1}</span>
+          </div>
+          <div className="mb-6">
+            My Balance -{" "}
             <span className="text-lg pt-6  font-bold">{balance}</span>
           </div>
           <div>

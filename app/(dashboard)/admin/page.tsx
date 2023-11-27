@@ -326,7 +326,7 @@ export default function Admin() {
           </button>
         </div>
       </div>
-      <div className="flex justify-between w-3/4 mb-5">
+      <div className="flex mobile2 justify-between w-3/4 mb-5">
         <button
           onClick={() => setState("1")}
           className={` ${cn(buttonVariants())} mt-3 `}

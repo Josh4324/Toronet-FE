@@ -137,7 +137,7 @@ export default function Profile() {
 
   return (
     <section className="container flex flex-col  gap-6 py-8 md:max-w-[64rem] md:py-12 lg:py-24">
-      <div className="bg-gradient-to-r from-cyan-500 to-blue-500 flex justify-between px-12 py-12 rounded-md">
+      <div className="bg-gradient-to-r from-cyan-500 to-blue-500 mobile2 flex justify-between px-12 py-12 rounded-md">
         <div>
           <div className="text-center text-2xl">Environmental Actions</div>
           <div className="text-center text-lg pt-6 font-bold">
@@ -162,13 +162,13 @@ export default function Profile() {
         </div>
       </div>
 
-      <div className="mt-10 flex justify-between">
-        <div className="w-6/12">
+      <div className="mt-10 flex mobile2 justify-between">
+        <div className="w-6/12 ninput">
           <div>
             <input
               type="text"
               className={cn(
-                "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                "flex h-9 w-full  rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               )}
               placeholder="Enter the number of points to convert to toro coin"
               ref={pointRef}
@@ -199,7 +199,7 @@ export default function Profile() {
         </div>
       </div>
 
-      <div className="flex justify-between w-3/4 mb-5">
+      <div className="flex mobile2 justify-between w-3/4 mb-5">
         <button
           onClick={() => setState("1")}
           className={` ${cn(buttonVariants())} mt-3 `}

@@ -12,11 +12,15 @@ import { toro } from "@/utils/constant";
 import toroABI from "../../../abi/toro.json";
 import { ethers } from "ethers";
 import { toast } from "react-toastify";
+import { Web3Storage } from "web3.storage";
 
 export default function OrderPage() {
   const { chain } = useNetwork();
   const network = chain?.network;
   const [state, setState] = useState("1");
+  const [fileUrl, setFileUrl] = useState("");
+  const [fileUrl1, setFileUrl1] = useState("");
+  const [fileUrl2, setFileUrl2] = useState("");
 
   const createWriteContract = async () => {
     const { ethereum } = window;
@@ -28,8 +32,6 @@ export default function OrderPage() {
   };
 
   const actionTypeRef = useRef();
-  const doc1Ref = useRef();
-  const doc2Ref = useRef();
 
   const weightRef = useRef();
   const sortRef = useRef();
@@ -41,13 +43,17 @@ export default function OrderPage() {
     evt.preventDefault();
     const contract = await createWriteContract();
 
+    if (fileUrl === "" || fileUrl1 === "") {
+      return toast.error("Document upload is in progress");
+    }
+
     const id = toast.loading("Transaction in progress..");
 
     try {
       const tx = await contract.registerAction(
         actionTypeRef.current.value,
-        doc1Ref.current.value,
-        doc2Ref.current.value
+        fileUrl,
+        fileUrl1
       );
 
       await tx.wait();
@@ -114,13 +120,14 @@ export default function OrderPage() {
     evt.preventDefault();
     const contract = await createWriteContract();
 
+    if (fileUrl2 === "") {
+      return toast.error("Document upload is in progress");
+    }
+
     const id = toast.loading("Transaction in progress..");
 
     try {
-      const tx = await contract.registerTrees(
-        treeRef.current.value,
-        locationRef.current.value
-      );
+      const tx = await contract.registerTrees(treeRef.current.value, fileUrl2);
 
       await tx.wait();
       setTimeout(() => {
@@ -145,6 +152,76 @@ export default function OrderPage() {
       });
     }
   };
+
+  async function onChange(e) {
+    const file = e.target.files[0];
+    try {
+      toast.info("Uploading Document......");
+      const client = new Web3Storage({
+        token:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGNiRGZhNDBBYjBEZTcwNTkwNURERDg4RTAwOWMzOTM3OGEzOWRhMmYiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NDk5MjExMTU1NDYsIm5hbWUiOiJXZWIzIn0._kphTIOj4s98lZpgrkcHCSxAmW7j15CNEYd5qbWULjs",
+      });
+
+      const cid = await client.put(e.target.files, {
+        name: file.name,
+        maxRetries: 3,
+      });
+
+      const url = `https://ipfs.io/ipfs/${cid}/${file.name}`;
+      console.log(url);
+      toast.success("Document uploaded successfully");
+      setFileUrl(url);
+    } catch (error) {
+      console.log("Error uploading file: ", error);
+    }
+  }
+
+  async function onChange2(e) {
+    const file = e.target.files[0];
+    try {
+      toast.info("Uploading Document......");
+
+      const client = new Web3Storage({
+        token:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGNiRGZhNDBBYjBEZTcwNTkwNURERDg4RTAwOWMzOTM3OGEzOWRhMmYiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NDk5MjExMTU1NDYsIm5hbWUiOiJXZWIzIn0._kphTIOj4s98lZpgrkcHCSxAmW7j15CNEYd5qbWULjs",
+      });
+
+      const cid = await client.put(e.target.files, {
+        name: file.name,
+        maxRetries: 3,
+      });
+
+      const url = `https://ipfs.io/ipfs/${cid}/${file.name}`;
+      console.log(url);
+      toast.success("Document uploaded successfully");
+      setFileUrl1(url);
+    } catch (error) {
+      console.log("Error uploading file: ", error);
+    }
+  }
+
+  async function onChange3(e) {
+    const file = e.target.files[0];
+    try {
+      toast.info("Uploading Document......");
+      const client = new Web3Storage({
+        token:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGNiRGZhNDBBYjBEZTcwNTkwNURERDg4RTAwOWMzOTM3OGEzOWRhMmYiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NDk5MjExMTU1NDYsIm5hbWUiOiJXZWIzIn0._kphTIOj4s98lZpgrkcHCSxAmW7j15CNEYd5qbWULjs",
+      });
+
+      const cid = await client.put(e.target.files, {
+        name: file.name,
+        maxRetries: 3,
+      });
+
+      const url = `https://ipfs.io/ipfs/${cid}/${file.name}`;
+      console.log(url);
+      toast.success("Document uploaded successfully");
+      setFileUrl2(url);
+    } catch (error) {
+      console.log("Error uploading file: ", error);
+    }
+  }
 
   return (
     <section className="container flex flex-col  gap-6 py-8 md:max-w-[64rem] md:py-12 lg:py-24">
@@ -202,32 +279,52 @@ export default function OrderPage() {
                 </select>
               </div>
               <div className="grid gap-1 mb-3">
-                <label>
-                  Link to Document describing the Enviromental action
-                </label>
+                <div className="flex w-full justify-between">
+                  <div>Upload Document describing the Enviromental action</div>
+
+                  <div>
+                    <a
+                      download
+                      href="https://res.cloudinary.com/josh4324/raw/upload/v1701080953/EA_fn4jcn.docx"
+                    >
+                      Download Sample Doc
+                    </a>
+                  </div>
+                </div>
+
                 <input
-                  ref={doc1Ref}
-                  type="text"
                   className={cn(
                     "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   )}
-                  placeholder="Enter the link to a document describing the environmental action"
                   required
+                  type="file"
+                  onChange={onChange}
                 />
               </div>
               <div className="grid gap-1 mb-3">
-                <label>
-                  {" "}
-                  Link to Document containing proof of Enviromental Actions
-                </label>
+                <div className="flex w-full justify-between">
+                  <div>
+                    {" "}
+                    Upload Document containing proof of Enviromental Actions
+                  </div>
+
+                  <div>
+                    <a
+                      download
+                      href="https://res.cloudinary.com/josh4324/raw/upload/v1701082634/EA1_kjvmos.docx"
+                    >
+                      Download Sample Doc
+                    </a>
+                  </div>
+                </div>
+
                 <input
-                  ref={doc2Ref}
-                  type="text"
                   className={cn(
                     "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   )}
-                  placeholder="Enter the link to document containing proof of environmental action"
                   required
+                  type="file"
+                  onChange={onChange2}
                 />
               </div>
               <button className={` ${cn(buttonVariants())} mt-3 `}>
@@ -312,17 +409,29 @@ export default function OrderPage() {
                 />
               </div>
               <div className="grid gap-1 mb-3">
-                <label>
-                  Link to document containing locations of trees planted
-                </label>
+                <div className="flex w-full justify-between">
+                  <div>
+                    {" "}
+                    Upload document containing locations of trees planted
+                  </div>
+
+                  <div>
+                    <a
+                      download
+                      href="https://res.cloudinary.com/josh4324/raw/upload/v1701087159/EA2_lo6lax.docx"
+                    >
+                      Download Sample Doc
+                    </a>
+                  </div>
+                </div>
                 <input
-                  type="text"
+                  type="file"
                   className={cn(
                     "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   )}
-                  placeholder="Enter the link to document containing locations of trees planted"
                   required
-                  ref={locationRef}
+                  type="file"
+                  onChange={onChange3}
                 />
               </div>
 

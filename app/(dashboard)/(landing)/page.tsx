@@ -74,6 +74,63 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="bg-blue-950  justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
+        <div className="text-center text-3xl">About ECO4Reward</div>
+
+        <ul className="list-disc">
+          <li className="text-lg pt-3">
+            {" "}
+            Environmental Action involves actions that positively affect the
+            environment.
+          </li>
+          <li className="text-lg pt-3">
+            {" "}
+            Waste Actions involves Waste recycling actions.
+          </li>
+          <li className="text-lg pt-3">
+            {" "}
+            Tree planting involves planting of trees.
+          </li>
+          <li className="text-lg pt-3">
+            {" "}
+            Waste Actions involves Waste recycling actions.
+          </li>
+          <li className="text-lg pt-3">
+            {" "}
+            Tree planting involves planting of trees.
+          </li>
+          <li className="text-lg pt-3">
+            {" "}
+            All actions need confirmation by admin after verification of the
+            information submitted.
+          </li>
+          <li className="text-lg pt-3">
+            {" "}
+            For Environmental actions, if information submitted are not concrete
+            enough, physical confirmation may be needed before point are awarded
+          </li>
+          <li className="text-lg pt-3">
+            {" "}
+            For waste actions, waste are submitted at accredited centres before
+            point are awarded. Waste Submission centers -
+            <a target="_blank" href="https://lawma.gov.ng/recycling/">
+              {" "}
+              https://lawma.gov.ng/recycling/
+            </a>
+          </li>
+          <li className="text-lg pt-3">
+            {" "}
+            For Environmental actions, if information submitted are not concrete
+            enough, physical confirmation may be needed before point are awarded
+          </li>
+          <li className="text-lg pt-3">
+            {" "}
+            For Tree planting, physical confirmation are done before point are
+            awarded
+          </li>
+        </ul>
+      </section>
+
       <section
         id="features"
         className="container space-y-6 bg-slate-50 py-8 dark:bg-transparent md:py-12 lg:py-24"
@@ -171,7 +228,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-cyan-500 to-blue-500 flex justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
+      <section className="bg-blue-950 flex justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
         <div>
           <div className="text-center text-2xl">Environmental Actions</div>
           <div className="text-center text-lg pt-6 font-bold">
@@ -219,43 +276,34 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-cyan-500 to-blue-500  justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
+      <section className="bg-blue-950  justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
         <div className="text-center text-3xl">How to Use ECO4Reward</div>
-        <div className="text-lg pt-6">Go to Actions page</div>
-        <div className="text-lg pt-3">
-          Select one of three options - Environment Action, Waste or Tree
-          planting
-        </div>
-        <div className="text-lg pt-3">
-          Environmental Action involves actions that positively affect the
-          environment.
-        </div>
-        <div className="text-lg pt-3">
-          Waste Actions involves Waste recycling actions.
-        </div>
-        <div className="text-lg pt-3">
-          Tree planting involves planting of trees.
-        </div>
-        <div className="text-lg pt-3">
-          All actions need confirmation by admin after verification of the
-          information submitted.
-        </div>
-        <div className="text-lg pt-3">
-          For Environmental actions, if information submitted are not concrete
-          enough, physical confirmation may be needed before point are awarded
-        </div>
-        <div className="text-lg pt-3">
-          For waste actions, waste are submitted at accredited centres before
-          point are awarded. Waste Submission centers -
-          <a target="_blank" href="https://lawma.gov.ng/recycling/">
+
+        <ul className="list-disc">
+          <li className="text-lg pt-6">Go to Actions page</li>
+          <li className="text-lg pt-3">
             {" "}
-            https://lawma.gov.ng/recycling/
-          </a>
-        </div>
-        <div className="text-lg pt-3">
-          For Tree planting, physical confirmation are done before point are
-          awarded
-        </div>
+            Select one of three options - Environment Action, Waste or Tree
+            planting
+          </li>
+          <li className="text-lg pt-3">
+            {" "}
+            For Environmental Action, users need to select the action type,
+            upload the description document and the proof document
+          </li>
+          <li className="text-lg pt-3">
+            {" "}
+            For Waste Recyling Action, users need to enter the weight of the
+            waste and select the sorted option ( this checks if the waste is
+            sorted or not)
+          </li>
+          <li className="text-lg pt-3">
+            {" "}
+            For Tree Planting Action, users need to enter the number of trees
+            planted and upload the document that contains all the locations of
+            the trees planted.
+          </li>
+        </ul>
       </section>
 
       <section id="open-source" className="container py-8 md:py-12 lg:py-24">

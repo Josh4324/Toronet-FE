@@ -230,8 +230,8 @@ export default function Profile() {
               <tr className="font-heading">
                 <th>Id</th>
                 <th>Action Type</th>
-                <th>Description Doc Link</th>
-                <th>Proof Doc Link</th>
+                <th>Description Doc</th>
+                <th>Proof Doc </th>
                 <th>Creator</th>
                 <th>Approval Status</th>
                 <th>Status</th>
@@ -242,9 +242,23 @@ export default function Profile() {
                   <tr className="text-center">
                     <td className="py-6">{String(item?.id)}</td>
                     <td>{item.action_type}</td>
-                    <td>{item.description}</td>
-                    <td>{item.proof}</td>
-                    <td>{item.creator}</td>
+                    <td>
+                      {" "}
+                      <a
+                        className="text-blue-600"
+                        download
+                        href={item.description}
+                      >
+                        Document
+                      </a>
+                    </td>
+                    <td>
+                      {" "}
+                      <a className="text-blue-600" download href={item.proof}>
+                        Document
+                      </a>
+                    </td>
+                    <td className="px-3">{item.creator}</td>
                     <td>
                       {item.status && item.confirmed
                         ? "Approved"
@@ -279,7 +293,7 @@ export default function Profile() {
                     <td className="py-6">{String(item?.id)}</td>
                     <td>{Number(item.weight)}</td>
                     <td>{item.sorted ? "True" : "False"}</td>
-                    <td>{item.creator}</td>
+                    <td className="px-3">{item.creator}</td>
                     <td>
                       {item.status && item.confirmed
                         ? "Approved"
@@ -303,7 +317,7 @@ export default function Profile() {
               <tr className="font-heading">
                 <th>Id</th>
                 <th>Number of Trees</th>
-                <th>Locations Doc Link</th>
+                <th>Locations Doc</th>
                 <th>Creator</th>
                 <th>Approval Status</th>
                 <th>Status</th>
@@ -313,8 +327,17 @@ export default function Profile() {
                   <tr className="text-center">
                     <td className="py-6">{String(item?.id)}</td>
                     <td>{Number(item.no_of_trees)}</td>
-                    <td>{item.locations}</td>
-                    <td>{item.creator}</td>
+                    <td>
+                      {" "}
+                      <a
+                        className="text-blue-600"
+                        download
+                        href={item.locations}
+                      >
+                        Document
+                      </a>
+                    </td>
+                    <td className="px-3">{item.creator}</td>
                     <td>
                       {item.status && item.confirmed
                         ? "Approved"

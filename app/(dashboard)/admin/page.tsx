@@ -357,8 +357,8 @@ export default function Admin() {
               <tr className="font-heading">
                 <th>Id</th>
                 <th>Action Type</th>
-                <th>Description Doc Link</th>
-                <th>Proof Doc Link</th>
+                <th>Description Doc</th>
+                <th>Proof Doc </th>
                 <th>Creator</th>
                 <th>Approval Status</th>
                 <th>Status</th>
@@ -384,7 +384,7 @@ export default function Admin() {
                         Document
                       </a>
                     </td>
-                    <td>{item.creator}</td>
+                    <td className="px-3">{item.creator}</td>
                     <td>
                       {item.status && item.confirmed
                         ? "Approved"
@@ -466,7 +466,7 @@ export default function Admin() {
               <tr className="font-heading">
                 <th>Id</th>
                 <th>Number of Trees</th>
-                <th>Locations Doc Link</th>
+                <th>Locations Doc</th>
                 <th>Creator</th>
                 <th>Approval Status</th>
                 <th>Status</th>

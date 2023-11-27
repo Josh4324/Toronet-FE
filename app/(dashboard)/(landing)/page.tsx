@@ -228,7 +228,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-blue-950 flex justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
+      <section className="bg-blue-950 mobile2 flex justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
         <div>
           <div className="text-center text-2xl">Environmental Actions</div>
           <div className="text-center text-lg pt-6 font-bold">
@@ -276,7 +276,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-blue-950  justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
+      <section className="bg-blue-950 mobile1  justify-between px-12 py-12 rounded-md container py-8 md:py-12 lg:py-24">
         <div className="text-center text-3xl">How to Use ECO4Reward</div>
 
         <ul className="list-disc">

@@ -135,7 +135,7 @@ export default function OrderPage() {
       }, 10000);
 
       toast.update(id, {
-        render: "Transaction successfull, Waste Action Created",
+        render: "Transaction successfull, Tree Planting Action Created",
         type: "success",
         isLoading: false,
         autoClose: 10000,
